@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "zank.mods.graalmc.fabric.ExampleModFabric"
+      "zank.mods.graalmc.fabric.GraalMCFabric"
     ],
     "client": [
       "zank.mods.graalmc.fabric.client.ExampleModFabricClient"
