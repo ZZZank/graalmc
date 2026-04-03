@@ -1,0 +1,15 @@
+# 项目排除路径
+/.gradle/
+/build/
+/common/.gradle/
+/common/build/
+/common/build/classes/java/main/
+/fabric/.gradle/
+/fabric/build/
+/fabric/build/classes/java/main/
+/forge/.gradle/
+/forge/build/
+/forge/build/classes/java/main/
+
+/.idea/
+/.architectury-transformer/
