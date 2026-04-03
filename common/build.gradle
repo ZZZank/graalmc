@@ -1,5 +1,20 @@
+plugins {
+    id 'com.gradleup.shadow'
+}
+
 architectury {
     common rootProject.enabled_platforms.split(',')
+}
+
+configurations {
+    // Files in this configuration will be bundled into your mod using the Shadow plugin.
+    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
+    shade {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom(shade)
+    runtimeClasspath.extendsFrom(shade)
 }
 
 dependencies {
@@ -7,4 +22,19 @@ dependencies {
     // which get remapped to the correct annotations on each platform.
     // Do NOT use other classes from Fabric Loader.
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+
+    shade("org.graalvm.polyglot:polyglot:${mod_version}")
+    shade("org.graalvm.polyglot:js:${mod_version}")
+}
+
+shadowJar {
+    configurations = [project.configurations.shade]
+    archiveClassifier = 'dev-shadow'
+
+    exclude("org/graalvm/shadowed/com/ibm/icu/**")
+    relocate("org.graalvm.shadowed.com.ibm.icu", "com.ibm.icu")
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
 }
