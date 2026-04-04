@@ -119,7 +119,6 @@ publisher {
     gameVersions.set(List.of("1.21.1", "1.21.11", "26.1"))
     loaders.set(List.of("forge"))
     artifact.set(tasks.remapJar)
-    setJavaVersions(List.of("21"))
 }
 
 void validatedProp(String prop, String env, BiConsumer<String, String> action) {
