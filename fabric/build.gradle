@@ -1,5 +1,8 @@
+import java.util.function.BiConsumer
+
 plugins {
     id 'com.gradleup.shadow'
+    id("com.hypherionmc.modutils.modpublisher")
 }
 
 architectury {
@@ -59,4 +62,41 @@ shadowJar {
 
 remapJar {
     inputFile.set shadowJar.archiveFile
+}
+
+// see: https://github.com/firstdarkdev/modpublisher
+publisher {
+    validatedProp("publish.modrinth", "MODRINTH_TOKEN") { id, key ->
+        modrinthID.set(id)
+        apiKeys { modrinth(key) }
+    }
+
+    validatedProp("publish.curseforge", "CURSE_TOKEN") { id, key ->
+        curseID.set(id)
+        apiKeys { curseforge(key) }
+    }
+
+    validatedProp("publish.github", "GITHUB_TOKEN") { id, key ->
+        githubRepo.set(id)
+        apiKeys { github(key) }
+    }
+
+    // Enable Debug mode. When enabled, no files will actually be uploaded
+    debug.set(false)
+
+    changelog.set(rootProject.file("CHANGELOG.md"))
+    projectVersion.set(mod_version)
+    displayName.set("${mod_version} for Fabric")
+    gameVersions.set(List.of("1.20.1", "1.21.1", "1.21.11", "26.1"))
+    loaders.set(List.of("fabric"))
+    artifact.set(tasks.remapJar)
+    setJavaVersions(List.of("17"))
+}
+
+void validatedProp(String prop, String env, BiConsumer<String, String> action) {
+    String projectID = project.property(prop)
+    String apiKey = System.getenv(env)
+    if (projectID != null && !projectID.startsWith('[') && apiKey != null && !apiKey.empty) {
+        action.accept(projectID, apiKey)
+    }
 }
