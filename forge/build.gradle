@@ -30,7 +30,14 @@ configurations {
     }
 }
 
+loom {
+    silentMojangMappingsLicense()
+}
+
 dependencies {
+    minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
+    mappings loom.officialMojangMappings()
+
     forge "net.minecraftforge:forge:$rootProject.forge_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
