@@ -45,7 +45,8 @@ dependencies {
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_version"
 
-    implementation(rootProject) { transitive = true }
+    common(rootProject)
+    shadowBundle(rootProject)
 }
 
 processResources {
