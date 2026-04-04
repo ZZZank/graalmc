@@ -33,11 +33,19 @@ configurations {
     }
 }
 
+loom {
+    silentMojangMappingsLicense()
+}
+
+dependencies {
+    minecraft "net.minecraft:minecraft:$minecraft_version"
+    mappings loom.officialMojangMappings()
+}
+
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_version"
 
-    common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
-    shadowBundle project(path: ':common', configuration: 'transformProductionForge')
+    implementation(rootProject) { transitive = true }
 }
 
 processResources {
@@ -51,6 +59,10 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    inputFile.set(shadowJar.archiveFile)
 
     manifest {
         attributes([
@@ -64,10 +76,6 @@ shadowJar {
             "Multi-Release": true,
         ])
     }
-}
-
-remapJar {
-    inputFile.set shadowJar.archiveFile
 }
 
 // see: https://github.com/firstdarkdev/modpublisher

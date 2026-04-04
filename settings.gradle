@@ -13,6 +13,5 @@ pluginManagement {
 
 rootProject.name = 'graalmc'
 
-include 'common'
 include 'fabric'
 include 'forge'
