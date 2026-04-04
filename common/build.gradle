@@ -13,8 +13,7 @@ configurations {
         canBeResolved = true
         canBeConsumed = false
     }
-    compileClasspath.extendsFrom(shade)
-    runtimeClasspath.extendsFrom(shade)
+    implementation.extendsFrom(shade)
 }
 
 dependencies {
@@ -37,4 +36,8 @@ shadowJar {
 
 remapJar {
     inputFile.set shadowJar.archiveFile
+}
+
+tasks.withType(dev.architectury.plugin.TransformingTask).configureEach {
+    input.set(shadowJar.archiveFile)
 }
