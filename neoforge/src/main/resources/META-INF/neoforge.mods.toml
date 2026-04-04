@@ -1,0 +1,34 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+issueTrackerURL = "https://github.com/ZZZank/graalmc/issues"
+license = "LGPLv3"
+displayURL = "https://github.com/ZZZank/graalmc"
+authors = "Zank"
+
+[[mods]]
+modId = "graalmc"
+version = "${version}"
+displayName = "GraalMC"
+authors = "Zank"
+description = '''
+GraalJS, tweaked for Minecraft
+'''
+logoFile = "icon.png"
+
+# NeoForge 特定的依赖配置
+[[dependencies.graalmc]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.graalmc]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config="graalmc.mixins.json"

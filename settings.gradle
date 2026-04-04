@@ -15,3 +15,4 @@ rootProject.name = 'graalmc'
 
 include 'fabric'
 include 'forge'
+include 'neoforge'

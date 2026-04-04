@@ -10,6 +10,8 @@
 /forge/.gradle/
 /forge/build/
 /forge/build/classes/java/main/
+/neoforge/.gradle/
+/neoforge/build/
 
 /.idea/
 /.architectury-transformer/

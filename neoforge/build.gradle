@@ -5,15 +5,9 @@ plugins {
     id("com.hypherionmc.modutils.modpublisher")
 }
 
-loom {
-    forge {
-        mixinConfig "graalmc.mixins.json"
-    }
-}
-
 architectury {
     platformSetupLoomIde()
-    forge()
+    neoForge()
 }
 
 configurations {
@@ -34,32 +28,39 @@ configurations {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 17
+    it.options.release = 21
 }
 
 loom {
     silentMojangMappingsLicense()
 }
 
+repositories {
+    maven {
+        url = "https://maven.neoforged.net/releases/"
+        name = "NeoForged"
+    }
+}
+
 dependencies {
-    minecraft "net.minecraft:minecraft:$minecraft_version"
+    minecraft("net.minecraft:minecraft:1.21.1")
     mappings loom.officialMojangMappings()
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:$rootProject.forge_version"
+    neoForge("net.neoforged:neoforge:21.1.122")
 
     common(rootProject)
     shadowBundle(rootProject)
 }
 
 processResources {
-    inputs.property 'version', project.version
+    inputs.property 'version', "1.21.1"
 
     filesMatching('META-INF/mods.toml') {
         expand version: inputs.properties.version
@@ -78,9 +79,9 @@ remapJar {
         attributes([
             "Specification-Title": "${project.name}",
             "Specification-Vendor": "Zank",
-            "Specification-Version": "${project.version}",
+            "Specification-Version": "${"1.21.1"}",
             "Implementation-Title": "${project.name}",
-            "Implementation-Version": "${project.version}",
+            "Implementation-Version": "${"1.21.1"}",
             "Implementation-Vendor" :"Zank",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             "Multi-Release": true,
@@ -112,7 +113,7 @@ publisher {
     projectVersion.set(mod_version)
     // Example: 1.2.3 for 1.20.1-forge
     displayName.set("${mod_version} for Forge")
-    gameVersions.set(List.of("1.20.1", "1.21.1", "1.21.11", "26.1"))
+    gameVersions.set(List.of("1.21.1", "1.21.11", "26.1"))
     loaders.set(List.of("forge"))
     artifact.set(tasks.remapJar)
     setJavaVersions(List.of("17"))
