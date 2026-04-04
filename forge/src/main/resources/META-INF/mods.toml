@@ -1,17 +1,17 @@
 modLoader = "javafml"
 loaderVersion = "[47,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+issueTrackerURL = "https://github.com/ZZZank/graalmc/issues"
+license = "LGPLv3"
 
 [[mods]]
 modId = "graalmc"
 version = "${version}"
 displayName = "GraalMC"
-authors = "Me!"
+authors = "Zank"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+GraalJS, tweaked for Minecraft
 '''
-#logoFile = ""
+logoFile = "icon.png"
 
 [[dependencies.graalmc]]
 modId = "forge"
@@ -23,6 +23,6 @@ side = "BOTH"
 [[dependencies.graalmc]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.1,)"
+versionRange = "[1.0,)"
 ordering = "NONE"
 side = "BOTH"

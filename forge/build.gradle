@@ -55,6 +55,19 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
+
+    manifest {
+        attributes([
+            "Specification-Title": "${project.name}",
+            "Specification-Vendor": "Zank",
+            "Specification-Version": "${project.version}",
+            "Implementation-Title": "${project.name}",
+            "Implementation-Version": "${project.version}",
+            "Implementation-Vendor" :"Zank",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "Multi-Release": true,
+        ])
+    }
 }
 
 remapJar {
