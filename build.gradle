@@ -54,6 +54,14 @@ subprojects {
         it.options.release = 17
     }
 
+    tasks.register("prodClient", net.fabricmc.loom.task.prod.ClientProductionRunTask) {
+        mods.from(remapJar.archiveFile)
+
+        jvmArgs.add("-Xmx2G")
+
+        runDir = file("run")
+    }
+
     // Configure Maven publishing.
     publishing {
         publications {
