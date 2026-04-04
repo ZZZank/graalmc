@@ -49,7 +49,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:$rootProject.fabric_loader_version")
 
     common(rootProject)
-    shadowBundle(rootProject)
+    shadowBundle(project(path: ':', configuration: 'shadow'))
 }
 
 processResources {
@@ -76,6 +76,9 @@ shadowJar {
             "Multi-Release": true,
         ])
     }
+
+    exclude("org/graalvm/shadowed/com/ibm/icu/**")
+    relocate("org.graalvm.shadowed.com.ibm.icu", "com.ibm.icu")
 }
 
 remapJar {

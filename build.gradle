@@ -6,30 +6,16 @@ plugins {
     id("com.hypherionmc.modutils.modpublisher") version "2.1.8"
 }
 
-configurations {
-    // Files in this configuration will be bundled into your mod using the Shadow plugin.
-    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
-    shade {
-        canBeResolved = true
-        canBeConsumed = false
-    }
-    implementation.extendsFrom(shade)
-}
-
 dependencies {
     // Source: https://mvnrepository.com/artifact/org.spongepowered/mixin
     compileOnly("org.spongepowered:mixin:0.8.7")
 
-    shade("org.graalvm.polyglot:polyglot:${mod_version}")
-    shade("org.graalvm.polyglot:js:${mod_version}")
+    shadow("org.graalvm.polyglot:polyglot:${mod_version}")
+    shadow("org.graalvm.polyglot:js:${mod_version}")
 }
 
 shadowJar {
-    configurations = [project.configurations.shade]
-    archiveClassifier = 'dev-shadow'
-
-    exclude("org/graalvm/shadowed/com/ibm/icu/**")
-    relocate("org.graalvm.shadowed.com.ibm.icu", "com.ibm.icu")
+    archiveClassifier = 'shadow'
 }
 
 allprojects {
