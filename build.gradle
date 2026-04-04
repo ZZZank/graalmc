@@ -96,4 +96,9 @@ subprojects {
 
         runDir = file("run")
     }
+
+    tasks.register("buildAndCollect", Copy) {
+        it.from(remapJar.archiveFile)
+        it.into(rootProject.file("./build/libs"))
+    }
 }
