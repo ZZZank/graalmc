@@ -112,11 +112,11 @@ publisher {
     changelog.set(rootProject.file("CHANGELOG.md"))
     projectVersion.set(mod_version)
     // Example: 1.2.3 for 1.20.1-forge
-    displayName.set("${mod_version} for Forge")
+    displayName.set("${mod_version} for Neoforge")
     gameVersions.set(List.of("1.21.1", "1.21.11", "26.1"))
     loaders.set(List.of("forge"))
     artifact.set(tasks.remapJar)
-    setJavaVersions(List.of("17"))
+    setJavaVersions(List.of("21"))
 }
 
 void validatedProp(String prop, String env, BiConsumer<String, String> action) {
