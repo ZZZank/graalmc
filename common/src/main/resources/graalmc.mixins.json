@@ -6,6 +6,7 @@
   "client": [
   ],
   "mixins": [
+    "MixinHostClassDesc_Members"
   ],
   "injectors": {
     "defaultRequire": 1
