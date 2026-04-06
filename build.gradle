@@ -10,8 +10,9 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/org.spongepowered/mixin
     compileOnly("org.spongepowered:mixin:0.8.7")
 
-    shadow("org.graalvm.polyglot:polyglot:${mod_version}")
-    shadow("org.graalvm.polyglot:js:${mod_version}")
+    String graalVersion = mod_version.substring(0, mod_version.lastIndexOf('.'))
+    shadow("org.graalvm.polyglot:polyglot:${graalVersion}")
+    shadow("org.graalvm.polyglot:js:${graalVersion}")
 }
 
 shadowJar {
