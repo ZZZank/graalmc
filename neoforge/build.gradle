@@ -60,10 +60,10 @@ dependencies {
 }
 
 processResources {
-    inputs.property 'version', "1.21.1"
+    inputs.property 'version', mod_version
 
-    filesMatching('META-INF/mods.toml') {
-        expand version: inputs.properties.version
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand version: mod_version
     }
 }
 
@@ -80,10 +80,10 @@ remapJar {
 
     manifest {
         attributes([
-            "Specification-Title": "${project.name}",
+            "Specification-Title": "${archives_name}",
             "Specification-Vendor": "Zank",
             "Specification-Version": "${"1.21.1"}",
-            "Implementation-Title": "${project.name}",
+            "Implementation-Title": "${archives_name}",
             "Implementation-Version": "${"1.21.1"}",
             "Implementation-Vendor" :"Zank",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),

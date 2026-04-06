@@ -59,10 +59,10 @@ dependencies {
 }
 
 processResources {
-    inputs.property 'version', project.version
+    inputs.property 'version', mod_version
 
     filesMatching('META-INF/mods.toml') {
-        expand version: inputs.properties.version
+        expand version: mod_version
     }
 }
 
@@ -79,10 +79,10 @@ remapJar {
 
     manifest {
         attributes([
-            "Specification-Title": "${project.name}",
+            "Specification-Title": "${archives_name}",
             "Specification-Vendor": "Zank",
             "Specification-Version": "${project.version}",
-            "Implementation-Title": "${project.name}",
+            "Implementation-Title": "${archives_name}",
             "Implementation-Version": "${project.version}",
             "Implementation-Vendor" :"Zank",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
