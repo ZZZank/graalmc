@@ -1,8 +1,8 @@
-package zank.mods.graalmc.fabric;
+package graal.mod.fabric;
 
 import net.fabricmc.api.ModInitializer;
 
-import zank.mods.graalmc.GraalMC;
+import graal.mod.GraalMC;
 
 public final class GraalMCFabric implements ModInitializer {
     @Override

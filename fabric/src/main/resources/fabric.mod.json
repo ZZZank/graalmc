@@ -15,7 +15,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "zank.mods.graalmc.fabric.GraalMCFabric"
+      "graal.mod.fabric.GraalMCFabric"
     ]
   },
   "mixins": [

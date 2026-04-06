@@ -1,8 +1,8 @@
-package zank.mods.graalmc.forge;
+package graal.mod.forge;
 
 import net.minecraftforge.fml.common.Mod;
 
-import zank.mods.graalmc.GraalMC;
+import graal.mod.GraalMC;
 
 @Mod(GraalMC.MOD_ID)
 public final class GraalMCForge {

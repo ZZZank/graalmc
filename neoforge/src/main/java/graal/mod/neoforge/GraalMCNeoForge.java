@@ -1,7 +1,7 @@
-package zank.mods.graalmc.forge;
+package graal.mod.neoforge;
 
 import net.neoforged.fml.common.Mod;
-import zank.mods.graalmc.GraalMC;
+import graal.mod.GraalMC;
 
 @Mod(GraalMC.MOD_ID)
 public final class GraalMCNeoForge {

@@ -1,8 +1,8 @@
-package zank.mods.graalmc;
+package graal.mod;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
-import zank.mods.graalmc.api.MemberRemapper;
+import graal.mod.api.MemberRemapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,7 +20,7 @@ public class RemapExample implements MemberRemapper {
             So let me just provide an example here""";
     }
 
-    private static void example() {
+    static void example() {
         MemberRemapper.GLOBAL.set(new RemapExample());
         var access = HostAccess.newBuilder().allowPublicAccess(true).build();
         try (var context = Context.newBuilder("js")

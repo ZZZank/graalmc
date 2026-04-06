@@ -16,7 +16,13 @@ dependencies {
 }
 
 shadowJar {
-    archiveClassifier = 'shadow'
+    configurations = [rootProject.configurations.shadow]
+    archiveClassifier = 'dev-shadow'
+
+    exclude("org/graalvm/shadowed/com/ibm/icu/**")
+    relocate("org.graalvm.shadowed.com.ibm.icu", "com.ibm.icu")
+    relocate("com.oracle", "graal.oracle")
+    relocate("org.graalvm", "graal.graalvm")
 }
 
 allprojects {

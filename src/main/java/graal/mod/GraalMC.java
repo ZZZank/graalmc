@@ -1,4 +1,4 @@
-package zank.mods.graalmc;
+package graal.mod;
 
 public final class GraalMC {
     public static final String MOD_ID = "graalmc";

@@ -1,10 +1,10 @@
-package zank.mods.graalmc.mixin;
+package graal.mod.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import zank.mods.graalmc.api.MemberRemapper;
+import graal.mod.api.MemberRemapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
