@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 /**
  * @author ZZZank
  */
-@Mixin(targets = "com.oracle.truffle.host.HostClassDesc$Members", remap = false)
+@Mixin(targets = "graal.oracle.truffle.host.HostClassDesc$Members", remap = false)
 @Pseudo
 public abstract class MixinHostClassDesc_Members {
 
