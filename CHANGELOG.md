@@ -1,13 +1,9 @@
-## GraalMC 25.0.1 -> 25.0.1.1
+## GraalMC 25.0.1.1 -> 25.0.2.0
 
-Using GraalJS 25.0.1
+Using GraalJS 25.0.2
 
-- Fix mod version in mod metadata file
-
-- ## GraalMC 1.0.0
-
-Using GraalJS 25.0.1
-
-- Full GraalJS feature
-- Duplicated libraries trimmed, making the total mod size ~50% smaller
-- MemberRemapper
+- Fix crash when running on GraalVM JVM
+- All classes are now under `graal.` package
+    - `com.oracle` -> `graal.oracle`
+    - `org.graalvm` -> `graal.graalvm`
+    - `zank.mods.graalmc` -> `graal.mod`
