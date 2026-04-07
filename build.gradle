@@ -20,8 +20,11 @@ shadowJar {
 
     exclude("org/graalvm/shadowed/com/ibm/icu/**")
     relocate("org.graalvm.shadowed.com.ibm.icu", "com.ibm.icu")
-    relocate("com.oracle", "graal.oracle")
+    // certain `org.graalvm.xxxx` jars are bundled in GraalVM (JVM), relocate to prevent conflict
     relocate("org.graalvm", "graal.graalvm")
+    relocate("com.oracle.svm", "graal.svm")
+
+    mergeServiceFiles()
 }
 
 allprojects {
