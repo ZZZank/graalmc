@@ -11,14 +11,17 @@ dependencies {
 
     String graalVersion = mod_version.substring(0, mod_version.lastIndexOf('.'))
     shadow("org.graalvm.polyglot:polyglot:${graalVersion}")
-    shadow("org.graalvm.polyglot:js:${graalVersion}")
+    shadow("org.graalvm.polyglot:js:${graalVersion}") {
+        exclude(group: "org.graalvm.shadowed", module: "icu4j")
+        exclude(group: "org.graalvm.truffle", module: "truffle-enterprise")
+    }
 }
 
 shadowJar {
     configurations = [rootProject.configurations.shadow]
     archiveClassifier = 'dev-shadow'
 
-    exclude("org/graalvm/shadowed/com/ibm/icu/**")
+    // icu4j removed
     relocate("org.graalvm.shadowed.com.ibm.icu", "com.ibm.icu")
     // certain `org.graalvm.xxxx` jars are bundled in GraalVM (JVM), relocate to prevent conflict
     relocate("org.graalvm", "graal.graalvm")
