@@ -11,11 +11,6 @@ loom {
     }
 }
 
-architectury {
-    platformSetupLoomIde()
-    forge()
-}
-
 configurations {
     common {
         canBeResolved = true
