@@ -3,7 +3,9 @@
 Using GraalJS 25.0.2
 
 - Fix crash when running on GraalVM JVM
-- All classes are now under `graal.` package
-    - `com.oracle` -> `graal.oracle`
+- Some classes are now moved to `graal.` package
     - `org.graalvm` -> `graal.graalvm`
     - `zank.mods.graalmc` -> `graal.mod`
+    - `com.oracle.svm` -> `graal.svm`
+    - However, other `com.oracle` classes are not moved
+- Some enterprise-only feature removed
