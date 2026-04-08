@@ -108,8 +108,8 @@ publisher {
     projectVersion.set(mod_version)
     // Example: 1.2.3 for 1.20.1-forge
     displayName.set("${mod_version} for Neoforge")
-    gameVersions.set(List.of("1.21.1", "1.21.11", "26.1"))
-    loaders.set(List.of("forge"))
+    gameVersions.set(List.of("1.21.1", "1.21.11", "26.1", "26.1.1"))
+    loaders.set(List.of("neoforge"))
     artifact.set(tasks.remapJar)
 }
 
