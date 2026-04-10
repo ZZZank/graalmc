@@ -1,3 +1,9 @@
+## GraalMC 25.0.2.0 -> 25.0.2.1
+
+Using GraalJS 25.0.2
+
+- fix: MemberRemapper not working
+
 ## GraalMC 25.0.1.1 -> 25.0.2.0
 
 Using GraalJS 25.0.2
