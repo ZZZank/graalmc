@@ -24,13 +24,13 @@ public class RemapExample implements MemberRemapper {
         MemberRemapper.GLOBAL.set(new RemapExample());
         var access = HostAccess.newBuilder().allowPublicAccess(true).build();
         try (var context = Context.newBuilder("js")
-            .allowHostClassLookup("zank.mods.graalmc.RemapExample"::equals)
+            .allowHostClassLookup("graal.mod.RemapExample"::equals)
             .allowHostAccess(access)
             .build()
         ) {
             context.eval(
                 "js", """
-                    let RemapExample = Java.type("zank.mods.graalmc.RemapExample")
+                    let RemapExample = Java.type("graal.mod.RemapExample")
                     let example = new RemapExample()
                     console.log(example.method())
                     console.log(example.field)
