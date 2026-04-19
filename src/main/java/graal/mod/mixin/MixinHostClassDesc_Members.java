@@ -17,7 +17,12 @@ import java.util.function.BiFunction;
 public abstract class MixinHostClassDesc_Members {
 
     @Redirect(method = "collectPublicFields", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Field;getName()Ljava/lang/String;"))
-    private static String redirectFieldName(Field f) {
+    private static String remapField(Field f) {
+        return MemberRemapper.GLOBAL.get().remapField(f);
+    }
+
+    @Redirect(method = "collectPublicInstanceFields", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Field;getName()Ljava/lang/String;"))
+    private static String remapField2(Field f) {
         return MemberRemapper.GLOBAL.get().remapField(f);
     }
 
@@ -25,6 +30,14 @@ public abstract class MixinHostClassDesc_Members {
     private static <K, V> V hideFieldRemappedToNull(Map<K, V> instance, K key, V value) {
         if (key != null) {
             return instance.put(key, value);
+        }
+        return null;
+    }
+
+    @Redirect(method = "collectPublicInstanceFields", at = @At(value = "INVOKE", target = "Ljava/util/Map;putIfAbsent(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
+    private static <K, V> V hideFieldRemappedToNull2(Map<K, V> instance, K key, V value) {
+        if (key != null) {
+            return instance.putIfAbsent(key, value);
         }
         return null;
     }
