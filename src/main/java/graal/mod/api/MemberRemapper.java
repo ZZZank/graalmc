@@ -11,6 +11,8 @@ public interface MemberRemapper {
     MemberRemapper JAVA = new MemberRemapper() {};
     AtomicReference<MemberRemapper> GLOBAL = new AtomicReference<>(JAVA);
 
+    String HIDE_MEMBER = null;
+
     default String remapMethod(Method method) {
         return method.getName();
     }

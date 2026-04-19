@@ -7,6 +7,8 @@ import graal.mod.api.MemberRemapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * @author ZZZank
@@ -19,8 +21,29 @@ public abstract class MixinHostClassDesc_Members {
         return MemberRemapper.GLOBAL.get().remapField(f);
     }
 
+    @Redirect(method = "collectPublicFields", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
+    private static <K, V> V hideFieldRemappedToNull(Map<K, V> instance, K key, V value) {
+        if (key != null) {
+            return instance.put(key, value);
+        }
+        return null;
+    }
+
     @Redirect(method = "putMethod", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Method;getName()Ljava/lang/String;"))
     private static String redirectMethodName(Method f) {
         return MemberRemapper.GLOBAL.get().remapMethod(f);
+    }
+
+    @Redirect(method = "putMethod", at = @At(value = "INVOKE", target = "Ljava/util/Map;merge(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;"))
+    private static <K, V> V hideMethodRemappedToNull(
+        Map<K, V> instance,
+        K key,
+        V value,
+        BiFunction<? super V, ? super V, ? extends V> remappingFunction
+    ) {
+        if (key != null) {
+            return instance.merge(key, value, remappingFunction);
+        }
+        return null;
     }
 }
