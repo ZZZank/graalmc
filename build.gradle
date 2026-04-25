@@ -30,6 +30,10 @@ shadowJar {
     mergeServiceFiles()
 }
 
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
+}
+
 allprojects {
     group = rootProject.maven_group
     version = rootProject.mod_version
