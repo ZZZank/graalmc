@@ -15,6 +15,13 @@ dependencies {
         exclude(group: "org.graalvm.shadowed", module: "icu4j")
         exclude(group: "org.graalvm.truffle", module: "truffle-enterprise")
     }
+
+    testImplementation('org.junit.jupiter:junit-jupiter:5.14.3')
+    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+}
+
+test {
+    useJUnitPlatform()
 }
 
 shadowJar {
