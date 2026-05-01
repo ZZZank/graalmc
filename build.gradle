@@ -10,8 +10,8 @@ dependencies {
     compileOnly("org.spongepowered:mixin:0.8.7")
 
     String graalVersion = mod_version.substring(0, mod_version.lastIndexOf('.'))
-    shadow("org.graalvm.polyglot:polyglot:${graalVersion}")
-    shadow("org.graalvm.polyglot:js:${graalVersion}") {
+    implementation("org.graalvm.polyglot:polyglot:${graalVersion}")
+    implementation("org.graalvm.polyglot:js:${graalVersion}") {
         exclude(group: "org.graalvm.shadowed", module: "icu4j")
         exclude(group: "org.graalvm.truffle", module: "truffle-enterprise")
     }
@@ -25,8 +25,11 @@ test {
 }
 
 shadowJar {
-    configurations = [rootProject.configurations.shadow]
     archiveClassifier = 'dev-shadow'
+
+    dependencies {
+        exclude(dependency("org.graalvm.js:js"))
+    }
 
     // icu4j removed
     relocate("org.graalvm.shadowed.com.ibm.icu", "com.ibm.icu")
