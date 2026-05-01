@@ -8,6 +8,7 @@ plugins {
 dependencies {
     // Source: https://mvnrepository.com/artifact/org.spongepowered/mixin
     compileOnly("org.spongepowered:mixin:0.8.7")
+    compileOnly("org.apache.logging.log4j:log4j-api:2.19.0")
 
     String graalVersion = mod_version.substring(0, mod_version.lastIndexOf('.'))
     implementation("org.graalvm.polyglot:polyglot:${graalVersion}")

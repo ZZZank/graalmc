@@ -1,5 +1,6 @@
 package graal.mod.mixin;
 
+import graal.mod.GraalMC;
 import graal.mod.api.FallbackTypeMappingProvider;
 import graal.mod.api.WithFallbackTypeMapping;
 import graal.mod.impl.RegistryImpl;
@@ -50,6 +51,7 @@ public abstract class MixinHostClassCache {
             );
             EMPTY_ARRAY_HostTargetMapping = (Object[]) Array.newInstance(c, 0);
         } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
+            GraalMC.LOGGER.error("Error loading Graal constant", e);
             throw new IllegalStateException(e);
         }
     }
