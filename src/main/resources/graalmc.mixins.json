@@ -9,6 +9,7 @@
     "MixinHostAccess",
     "MixinHostAccess_Builder",
     "MixinHostClassCache",
+    "MixinHostClassDesc",
     "MixinHostClassDesc_Members"
   ],
   "injectors": {

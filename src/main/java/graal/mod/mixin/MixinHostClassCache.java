@@ -3,10 +3,13 @@ package graal.mod.mixin;
 import graal.mod.GraalMC;
 import graal.mod.api.FallbackTypeMappingProvider;
 import graal.mod.api.WithFallbackTypeMapping;
+import graal.mod.impl.FallbackTypeMappingHolder;
 import graal.mod.impl.RegistryImpl;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.impl.AbstractPolyglotImpl;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,6 +30,9 @@ import java.util.function.Predicate;
 @Mixin(targets = "com.oracle.truffle.host.HostClassCache", remap = false)
 public abstract class MixinHostClassCache {
 
+    @Shadow
+    @Final
+    private ClassValue<FallbackTypeMappingHolder> descs;
     @Unique
     private static MethodHandle CTOR_HostTargetMapping;
     @Unique
@@ -58,8 +64,6 @@ public abstract class MixinHostClassCache {
 
     @Unique
     private final List<FallbackTypeMappingProvider> graal$fallbackProviders = new ArrayList<>();
-    @Unique
-    private final Map<Class<?>, Object> graal$cachedFallback = new HashMap<>();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void graal$setupProviders(
@@ -81,17 +85,16 @@ public abstract class MixinHostClassCache {
             return;
         }
 
-        var replacedBy = graal$cachedFallback.computeIfAbsent(
-            targetType, type -> {
-                var registry = new RegistryImpl<T>(CTOR_HostTargetMapping, EMPTY_ARRAY_HostTargetMapping);
+        var replacedBy = this.descs.get(targetType).graal$getFallbackMappings(() -> {
+            var registry = new RegistryImpl<T>(CTOR_HostTargetMapping, EMPTY_ARRAY_HostTargetMapping);
 
-                for (var provider : graal$fallbackProviders) {
-                    provider.provideMapping(targetType, registry);
-                }
-
-                return registry.build();
+            for (var provider : graal$fallbackProviders) {
+                provider.provideMapping(targetType, registry);
             }
-        );
+
+            return registry.build();
+        });
+
         cir.setReturnValue(replacedBy);
     }
 }
