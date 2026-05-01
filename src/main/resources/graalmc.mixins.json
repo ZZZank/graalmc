@@ -6,6 +6,9 @@
   "client": [
   ],
   "mixins": [
+    "MixinHostAccess",
+    "MixinHostAccess_Builder",
+    "MixinHostClassCache",
     "MixinHostClassDesc_Members"
   ],
   "injectors": {
