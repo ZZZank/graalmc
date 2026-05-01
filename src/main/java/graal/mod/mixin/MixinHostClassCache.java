@@ -4,7 +4,6 @@ import graal.mod.GraalMC;
 import graal.mod.api.TypeMappingProvider;
 import graal.mod.api.TypeMappingProviderRegistry;
 import graal.mod.impl.FallbackTypeMappingHolder;
-import graal.mod.impl.RegistryImpl;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.impl.AbstractPolyglotImpl;
 import org.spongepowered.asm.mixin.Final;
@@ -34,12 +33,11 @@ public abstract class MixinHostClassCache {
     @Final
     private ClassValue<FallbackTypeMappingHolder> descs;
     @Unique
-    private static MethodHandle CTOR_HostTargetMapping;
+    private static final MethodHandle CTOR_HostTargetMapping;
     @Unique
-    private static Object[] EMPTY_ARRAY_HostTargetMapping;
+    private static final Object[] EMPTY_ARRAY_HostTargetMapping;
 
-    @Inject(method = "<clinit>", at = @At("RETURN"))
-    private static void initConstants(CallbackInfo ci) {
+    static {
         try {
             var lookup = MethodHandles.lookup();
 
@@ -86,13 +84,31 @@ public abstract class MixinHostClassCache {
         }
 
         var replacedBy = this.descs.get(targetType).graal$getFallbackMappings(() -> {
-            var registry = new RegistryImpl<T>(CTOR_HostTargetMapping, EMPTY_ARRAY_HostTargetMapping);
+            var registered = new ArrayList<>();
+
+            var registry = new TypeMappingProvider.MappingRegistry<T>() {
+                @Override
+                public <S> void register(
+                    Class<S> sourceType,
+                    Class<T> targetType,
+                    Predicate<S> accepts,
+                    Function<S, T> converter,
+                    HostAccess.TargetMappingPrecedence precedence
+                ) {
+                    try {
+                        var mapping =
+                            CTOR_HostTargetMapping.invoke(sourceType, targetType, accepts, converter, precedence);
+                        registered.add(mapping);
+                    } catch (Throwable ignored) {
+                    }
+                }
+            };
 
             for (var provider : graal$fallbackProviders) {
                 provider.provideMapping(targetType, registry);
             }
 
-            return registry.build();
+            return registered.isEmpty() ? EMPTY_ARRAY_HostTargetMapping : registered.toArray(EMPTY_ARRAY_HostTargetMapping);
         });
 
         cir.setReturnValue(replacedBy);

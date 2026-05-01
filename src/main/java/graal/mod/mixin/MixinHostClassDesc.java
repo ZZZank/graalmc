@@ -4,6 +4,7 @@ import graal.mod.impl.FallbackTypeMappingHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -18,7 +19,7 @@ public class MixinHostClassDesc implements FallbackTypeMappingHolder {
     public Object[] graal$getFallbackMappings(Supplier<Object[]> initializer) {
         var mappings = graal$mappings;
         if (mappings == null) {
-            graal$mappings = mappings = initializer.get();
+            graal$mappings = mappings = Objects.requireNonNull(initializer.get());
         }
         return mappings;
     }
