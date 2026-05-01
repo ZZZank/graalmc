@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 /**
  * @author ZZZank
  */
-public final class RegistryImpl<T> implements TypeMappingProvider.ProviderRegistry<T> {
+public final class RegistryImpl<T> implements TypeMappingProvider.MappingRegistry<T> {
     private final List<Object> registered = new ArrayList<>();
     private final MethodHandle ctor;
     private final Object[] referenceArray;

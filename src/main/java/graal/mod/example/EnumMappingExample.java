@@ -29,7 +29,7 @@ public enum EnumMappingExample {
 
         TypeMappingProviderRegistry.cast(builder).graal$addProvider(new TypeMappingProvider() {
             @Override
-            public <T> void provideMapping(Class<T> objectType, ProviderRegistry<T> registry) {
+            public <T> void provideMapping(Class<T> objectType, MappingRegistry<T> registry) {
                 if (objectType.isEnum()) {
                     var collected = Arrays.stream(objectType.getEnumConstants()).collect(Collectors.toMap(
                         e -> ((Enum<?>) e).name(),

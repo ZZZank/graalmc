@@ -10,9 +10,9 @@ import java.util.function.Predicate;
  */
 public interface TypeMappingProvider {
 
-    <T> void provideMapping(Class<T> objectType, ProviderRegistry<T> registry);
+    <T> void provideMapping(Class<T> objectType, MappingRegistry<T> registry);
 
-    interface ProviderRegistry<T> {
+    interface MappingRegistry<T> {
         default <S> void register(Class<S> sourceType, Class<T> targetType, Predicate<S> accepts, Function<S, T> converter) {
             register(sourceType, targetType, accepts, converter, HostAccess.TargetMappingPrecedence.LOW);
         }
