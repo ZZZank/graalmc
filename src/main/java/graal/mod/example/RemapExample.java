@@ -1,4 +1,4 @@
-package graal.mod;
+package graal.mod.example;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
@@ -20,7 +20,7 @@ public class RemapExample implements MemberRemapper {
             So let me just provide an example here""";
     }
 
-    static void example() {
+    private static void run() {
         MemberRemapper.GLOBAL.set(new RemapExample());
         var access = HostAccess.newBuilder().allowPublicAccess(true).build();
         try (var context = Context.newBuilder("js")
@@ -30,8 +30,9 @@ public class RemapExample implements MemberRemapper {
         ) {
             context.eval(
                 "js", """
-                    let RemapExample = Java.type("graal.mod.RemapExample")
-                    let example = new RemapExample()
+                    const $RemapExample = Java.type("graal.mod.RemapExample")
+                    const example = new $RemapExample()
+
                     console.log(example.method())
                     console.log(example.field)
                     """
