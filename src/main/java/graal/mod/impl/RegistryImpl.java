@@ -1,6 +1,6 @@
 package graal.mod.impl;
 
-import graal.mod.api.FallbackTypeMappingProvider;
+import graal.mod.api.TypeMappingProvider;
 import org.graalvm.polyglot.HostAccess;
 
 import java.lang.invoke.MethodHandle;
@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 /**
  * @author ZZZank
  */
-public final class RegistryImpl<T> implements FallbackTypeMappingProvider.ProviderRegistry<T> {
+public final class RegistryImpl<T> implements TypeMappingProvider.ProviderRegistry<T> {
     private final List<Object> registered = new ArrayList<>();
     private final MethodHandle ctor;
     private final Object[] referenceArray;

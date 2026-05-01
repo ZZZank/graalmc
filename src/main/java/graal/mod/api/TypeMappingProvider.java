@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 /**
  * @author ZZZank
  */
-public interface FallbackTypeMappingProvider {
+public interface TypeMappingProvider {
 
     <T> void provideMapping(Class<T> objectType, ProviderRegistry<T> registry);
 

@@ -1,7 +1,7 @@
 package graal.mod.example;
 
-import graal.mod.api.FallbackTypeMappingProvider;
-import graal.mod.api.WithFallbackTypeMapping;
+import graal.mod.api.TypeMappingProvider;
+import graal.mod.api.TypeMappingProviderRegistry;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 
@@ -27,7 +27,7 @@ public enum EnumMappingExample {
         var builder = HostAccess.newBuilder()
             .allowPublicAccess(true);
 
-        WithFallbackTypeMapping.cast(builder).graal$addProvider(new FallbackTypeMappingProvider() {
+        TypeMappingProviderRegistry.cast(builder).graal$addProvider(new TypeMappingProvider() {
             @Override
             public <T> void provideMapping(Class<T> objectType, ProviderRegistry<T> registry) {
                 if (objectType.isEnum()) {

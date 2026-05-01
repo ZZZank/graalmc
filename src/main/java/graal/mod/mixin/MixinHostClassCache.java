@@ -1,8 +1,8 @@
 package graal.mod.mixin;
 
 import graal.mod.GraalMC;
-import graal.mod.api.FallbackTypeMappingProvider;
-import graal.mod.api.WithFallbackTypeMapping;
+import graal.mod.api.TypeMappingProvider;
+import graal.mod.api.TypeMappingProviderRegistry;
 import graal.mod.impl.FallbackTypeMappingHolder;
 import graal.mod.impl.RegistryImpl;
 import org.graalvm.polyglot.HostAccess;
@@ -63,7 +63,7 @@ public abstract class MixinHostClassCache {
     }
 
     @Unique
-    private final List<FallbackTypeMappingProvider> graal$fallbackProviders = new ArrayList<>();
+    private final List<TypeMappingProvider> graal$fallbackProviders = new ArrayList<>();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void graal$setupProviders(
@@ -72,9 +72,9 @@ public abstract class MixinHostClassCache {
         Object hostAccess,
         CallbackInfo ci
     ) {
-        if (hostAccess instanceof WithFallbackTypeMapping withFallbackTypeMapping) {
+        if (hostAccess instanceof TypeMappingProviderRegistry registry) {
             this.graal$fallbackProviders.clear();
-            this.graal$fallbackProviders.addAll(withFallbackTypeMapping.graal$viewProviders());
+            this.graal$fallbackProviders.addAll(registry.graal$viewProviders());
         }
     }
 
