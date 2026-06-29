@@ -8,16 +8,18 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author ZZZank
  */
 public interface MemberRemapper {
-    MemberRemapper JAVA = new MemberRemapper() {};
-    AtomicReference<MemberRemapper> GLOBAL = new AtomicReference<>(JAVA);
+    @Deprecated
+    AtomicReference<MemberRemapper> GLOBAL = new AtomicReference<>(new MemberRemapper() {});
+    MemberRemapperChain CHAIN = new MemberRemapperChain();
 
+    String FALL_THROUGH = "";
     String HIDE_MEMBER = null;
 
     default String remapMethod(Method method) {
-        return method.getName();
+        return FALL_THROUGH;
     }
 
     default String remapField(Field field) {
-        return field.getName();
+        return FALL_THROUGH;
     }
 }

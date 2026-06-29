@@ -21,7 +21,7 @@ public class RemapExample implements MemberRemapper {
     }
 
     private static void run() {
-        MemberRemapper.GLOBAL.set(new RemapExample());
+        MemberRemapper.CHAIN.addRemapper(new RemapExample());
         var access = HostAccess.newBuilder().allowPublicAccess(true).build();
         try (var context = Context.newBuilder("js")
             .allowHostClassLookup("graal.mod.RemapExample"::equals)

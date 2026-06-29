@@ -18,12 +18,12 @@ public abstract class MixinHostClassDesc_Members {
 
     @Redirect(method = "collectPublicFields", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Field;getName()Ljava/lang/String;"))
     private static String remapField(Field f) {
-        return MemberRemapper.GLOBAL.get().remapField(f);
+        return MemberRemapper.CHAIN.remapField(f);
     }
 
     @Redirect(method = "collectPublicInstanceFields", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Field;getName()Ljava/lang/String;"))
     private static String remapField2(Field f) {
-        return MemberRemapper.GLOBAL.get().remapField(f);
+        return MemberRemapper.CHAIN.remapField(f);
     }
 
     @Redirect(method = "collectPublicFields", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
@@ -44,7 +44,7 @@ public abstract class MixinHostClassDesc_Members {
 
     @Redirect(method = "putMethod", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Method;getName()Ljava/lang/String;"))
     private static String redirectMethodName(Method f) {
-        return MemberRemapper.GLOBAL.get().remapMethod(f);
+        return MemberRemapper.CHAIN.remapMethod(f);
     }
 
     @Redirect(method = "putMethod", at = @At(value = "INVOKE", target = "Ljava/util/Map;merge(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;"))
