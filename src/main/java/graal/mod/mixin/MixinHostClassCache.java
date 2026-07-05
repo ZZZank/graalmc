@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -32,6 +31,9 @@ public abstract class MixinHostClassCache {
     @Shadow
     @Final
     private ClassValue<FallbackTypeMappingHolder> descs;
+    @Shadow
+    @Final
+    private Map<Class<?>, Object> targetMappings;
     @Unique
     private static final MethodHandle CTOR_HostTargetMapping;
     @Unique
@@ -76,6 +78,30 @@ public abstract class MixinHostClassCache {
         }
     }
 
+    @Inject(method = "<init>", at = @At(value = "RETURN"))
+    private void graal$fillMappingForExistedTypes(
+        AbstractPolyglotImpl.AbstractHostAccess polyglotAccess,
+        AbstractPolyglotImpl.APIAccess apiAccess,
+        Object hostAccess,
+        CallbackInfo ci
+    ) {
+        for (var entry : this.targetMappings.entrySet()) {
+            var type = entry.getKey();
+            var original = (Object[]) entry.getValue();
+
+            var additional = graal$createMappings(graal$fallbackProviders, type);
+            if (additional.length == 0) {
+                continue;
+            }
+
+            var merged = Arrays.copyOf(original, original.length + additional.length);
+            System.arraycopy(additional, 0, merged, original.length, additional.length);
+
+            Arrays.sort(merged);
+            entry.setValue(merged);
+        }
+    }
+
     @Inject(method = "getMappings", at = @At("RETURN"), cancellable = true)
     private <T> void graal$getFallbackMapping(Class<T> targetType, CallbackInfoReturnable<Object> cir) {
         var original = cir.getReturnValue();
@@ -83,34 +109,35 @@ public abstract class MixinHostClassCache {
             return;
         }
 
-        var replacedBy = this.descs.get(targetType).graal$getFallbackMappings(() -> {
-            var registered = new ArrayList<>();
+        cir.setReturnValue(this.descs.get(targetType).graal$getFallbackMappings(() -> graal$createMappings(graal$fallbackProviders, targetType)));
+    }
 
-            var registry = new TypeMappingProvider.MappingRegistry<T>() {
-                @Override
-                public <S> void register(
-                    Class<S> sourceType,
-                    Class<T> targetType,
-                    Predicate<S> accepts,
-                    Function<S, T> converter,
-                    HostAccess.TargetMappingPrecedence precedence
-                ) {
-                    try {
-                        var mapping =
-                            CTOR_HostTargetMapping.invoke(sourceType, targetType, accepts, converter, precedence);
-                        registered.add(mapping);
-                    } catch (Throwable ignored) {
-                    }
+    @Unique
+    private static <T> Object[] graal$createMappings(List<TypeMappingProvider> mappingProviders, Class<T> targetType) {
+        var registered = new ArrayList<>();
+
+        var registry = new TypeMappingProvider.MappingRegistry<T>() {
+            @Override
+            public <S> void register(
+                Class<S> sourceType,
+                Class<T> targetType,
+                Predicate<S> accepts,
+                Function<S, T> converter,
+                HostAccess.TargetMappingPrecedence precedence
+            ) {
+                try {
+                    var mapping =
+                        CTOR_HostTargetMapping.invoke(sourceType, targetType, accepts, converter, precedence);
+                    registered.add(mapping);
+                } catch (Throwable ignored) {
                 }
-            };
-
-            for (var provider : graal$fallbackProviders) {
-                provider.provideMapping(targetType, registry);
             }
+        };
 
-            return registered.isEmpty() ? EMPTY_ARRAY_HostTargetMapping : registered.toArray(EMPTY_ARRAY_HostTargetMapping);
-        });
+        for (var provider : mappingProviders) {
+            provider.provideMapping(targetType, registry);
+        }
 
-        cir.setReturnValue(replacedBy);
+        return registered.isEmpty() ? EMPTY_ARRAY_HostTargetMapping : registered.toArray(EMPTY_ARRAY_HostTargetMapping);
     }
 }
