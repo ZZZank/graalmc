@@ -1,19 +1,13 @@
 package graal.mod.example;
 
-import graal.mod.api.TypeMappingProvider;
 import graal.mod.api.TypeMappingProviderRegistry;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 /**
  * @author ZZZank
  */
-public enum EnumMappingExample {
+enum EnumMappingExample {
     VAL,
     VAR,
     WOW
@@ -23,23 +17,11 @@ public enum EnumMappingExample {
         return example.ordinal();
     }
 
-    private static void run() {
+    public static void run() {
         var builder = HostAccess.newBuilder()
             .allowPublicAccess(true);
 
-        TypeMappingProviderRegistry.cast(builder).graal$addProvider(new TypeMappingProvider() {
-            @Override
-            public <T> void provideMapping(Class<T> objectType, MappingRegistry<T> registry) {
-                if (objectType.isEnum()) {
-                    var collected = Arrays.stream(objectType.getEnumConstants()).collect(Collectors.toMap(
-                        e -> ((Enum<?>) e).name(),
-                        Function.identity()
-                    ));
-                    var constants = Map.copyOf(collected);
-                    registry.register(String.class, objectType, constants::containsKey, constants::get);
-                }
-            }
-        });
+        TypeMappingProviderRegistry.cast(builder).graal$addProvider(new EnumTypeMappingProvider());
 
         var cx = Context.newBuilder("js")
             .allowHostAccess(builder.build())

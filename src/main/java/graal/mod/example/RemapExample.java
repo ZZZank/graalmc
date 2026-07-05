@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 /**
  * @author ZZZank
  */
-public class RemapExample implements MemberRemapper {
+class RemapExample implements MemberRemapper {
 
     public final int graal$field = 42;
 
@@ -20,7 +20,7 @@ public class RemapExample implements MemberRemapper {
             So let me just provide an example here""";
     }
 
-    private static void run() {
+    public static void run() {
         MemberRemapper.CHAIN.addRemapper(new RemapExample());
         var access = HostAccess.newBuilder().allowPublicAccess(true).build();
         try (var context = Context.newBuilder("js")
