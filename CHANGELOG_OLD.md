@@ -1,3 +1,16 @@
+## GraalMC 25.0.2.2 -> 25.0.2.3
+
+Using GraalJS 25.0.2
+
+- Fix: crash when running on Java 17
+
+## GraalMC 25.0.2.1 -> 25.0.2.2
+
+Using GraalJS 25.0.2
+
+- MemberRemapper now allows `null` return value, which indicates that such member should be hidden and not accessible in JS
+- fields with shadowing can now be remapped more completely
+
 ## GraalMC 25.0.2.0 -> 25.0.2.1
 
 Using GraalJS 25.0.2

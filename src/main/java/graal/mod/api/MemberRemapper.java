@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author ZZZank
  */
 public interface MemberRemapper {
-    @Deprecated
+    @Deprecated(since = "25.1.3.4: RemapperChain & MappingProvider", forRemoval = true)
     AtomicReference<MemberRemapper> GLOBAL = new AtomicReference<>(new MemberRemapper() {});
     MemberRemapperChain CHAIN = new MemberRemapperChain();
 
