@@ -21,21 +21,24 @@ class RemapExample implements MemberRemapper {
     }
 
     public static void run() {
+        var className = RemapExample.class.getName();
+
         MemberRemapper.CHAIN.addRemapper(new RemapExample());
         var access = HostAccess.newBuilder().allowPublicAccess(true).build();
-        try (var context = Context.newBuilder("js")
-            .allowHostClassLookup("graal.mod.RemapExample"::equals)
+        var context = Context.newBuilder("js")
+            .allowHostClassLookup(className::equals)
             .allowHostAccess(access)
-            .build()
-        ) {
+            .build();
+
+        try (context) {
             context.eval(
                 "js", """
-                    const $RemapExample = Java.type("graal.mod.RemapExample")
+                    const $RemapExample = Java.type("%s")
                     const example = new $RemapExample()
 
                     console.log(example.method())
                     console.log(example.field)
-                    """
+                    """.formatted(className)
             );
         }
     }

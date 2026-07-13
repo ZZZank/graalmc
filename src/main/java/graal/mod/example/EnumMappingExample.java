@@ -17,7 +17,7 @@ enum EnumMappingExample {
         return example.ordinal();
     }
 
-    public static void run() {
+    public static int[] run() {
         var builder = HostAccess.newBuilder()
             .allowPublicAccess(true);
 
@@ -29,17 +29,13 @@ enum EnumMappingExample {
             .logHandler(System.err)
             .build();
 
-        try {
-            cx.eval("js", """
-                const Example = Java.type("%s")
+        try (cx) {
+            var result = cx.eval("js", """
+                const Example = Java.type("%s");
 
-                console.log(Example.ord("VAL"))
-                console.log(Example.ord("VAR"))
-                console.log(Example.ord("WOW"))
+                [Example.ord("VAL"), Example.ord("VAR"), Example.ord("WOW")]
                 """.formatted(EnumMappingExample.class.getName()));
-        } finally {
-            cx.close();
+            return result.as(int[].class);
         }
-        throw new AssertionError("GOOD");
     }
 }
