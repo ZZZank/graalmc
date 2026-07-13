@@ -1,3 +1,10 @@
+## GraalMC 25.1.3.4 -> 25.1.3.5
+
+Using GraalJS 25.1.3
+
+- A new class parameter is added to `MemberRemapper` methods, allowing implementations to receive owner class of the member, aka the class where the specified member is found.
+- Breaking change: `MemberRemapper` API has been changed.
+
 ## GraalMC 25.0.2.3 -> 25.1.3.4
 
 Using GraalJS 25.1.3
