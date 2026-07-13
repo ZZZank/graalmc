@@ -41,13 +41,13 @@ class RemapExample implements MemberRemapper {
     }
 
     @Override
-    public String remapField(Field field) {
+    public String remapField(Field field, Class<?> clazz) {
         var name = field.getName();
         return name.startsWith("graal$") ? name.substring("graal$".length()) : name;
     }
 
     @Override
-    public String remapMethod(Method method) {
+    public String remapMethod(Method method, Class<?> clazz) {
         var name = method.getName();
         return name.startsWith("graal$") ? name.substring("graal$".length()) : name;
     }
