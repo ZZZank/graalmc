@@ -27,6 +27,11 @@ public abstract class MixinHostClassDesc_Members {
         CURRENT_TYPE.set(type);
     }
 
+    @Inject(method = "<init>", at = @At(value = "RETURN"))
+    private void graal$clearCurrentType(@Coerce Object hostAccess, Class<?> type, CallbackInfo ci) {
+        CURRENT_TYPE.remove();
+    }
+
     @Redirect(method = "collectPublicFields", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Field;getName()Ljava/lang/String;"))
     private static String remapField(Field f) {
         return MemberRemapper.CHAIN.remapField(f, CURRENT_TYPE.get());
