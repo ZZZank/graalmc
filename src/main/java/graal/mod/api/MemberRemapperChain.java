@@ -20,9 +20,9 @@ public final class MemberRemapperChain implements MemberRemapper {
     }
 
     @Override
-    public String remapMethod(Method method) {
+    public String remapMethod(Method method, Class<?> clazz) {
         for (var remapper : remappers) {
-            var remapped = remapper.remapMethod(method);
+            var remapped = remapper.remapMethod(method, clazz);
             if (remapped == null) {
                 return null;
             }
@@ -35,9 +35,9 @@ public final class MemberRemapperChain implements MemberRemapper {
     }
 
     @Override
-    public String remapField(Field field) {
+    public String remapField(Field field ,Class<?> clazz) {
         for (var remapper : remappers) {
-            var remapped = remapper.remapField(field);
+            var remapped = remapper.remapField(field, clazz);
             if (remapped == null) {
                 return null;
             }

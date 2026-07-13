@@ -15,11 +15,23 @@ public interface MemberRemapper {
     String FALL_THROUGH = "";
     String HIDE_MEMBER = null;
 
+    @Deprecated
     default String remapMethod(Method method) {
         return FALL_THROUGH;
     }
 
+    /// @param clazz The class where the provided method is found, NOT always representing the same class as [Method#getDeclaringClass()]
+    default String remapMethod(Method method, Class<?> clazz) {
+        return remapMethod(method);
+    }
+
+    @Deprecated
     default String remapField(Field field) {
         return FALL_THROUGH;
+    }
+
+    /// @param clazz The class where the provided field is found, NOT always representing the same class as [Field#getDeclaringClass()]
+    default String remapField(Field field, Class<?> clazz) {
+        return remapField(field);
     }
 }
