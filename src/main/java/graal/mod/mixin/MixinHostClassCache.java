@@ -85,6 +85,9 @@ public abstract class MixinHostClassCache {
         Object hostAccess,
         CallbackInfo ci
     ) {
+        if (this.targetMappings == null) {
+            return;
+        }
         for (var entry : this.targetMappings.entrySet()) {
             var type = entry.getKey();
             var original = (Object[]) entry.getValue();
