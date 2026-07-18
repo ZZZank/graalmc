@@ -10,7 +10,8 @@
     "MixinHostAccess_Builder",
     "MixinHostClassCache",
     "MixinHostClassDesc",
-    "MixinHostClassDesc_Members"
+    "MixinHostClassDesc_Members",
+    "MixinHotSpotTruffleRuntimeAccess"
   ],
   "injectors": {
     "defaultRequire": 1
