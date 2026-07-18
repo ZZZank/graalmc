@@ -1,3 +1,11 @@
+## GraalMC 25.1.3.5 -> 25.1.3.6
+
+Using GraalJS 25.1.3
+
+If you are using GraalVM, update **your GraalVM JDK** to 25.1 or newer..
+
+- Add proper error message when running Graal on GraalVM 25.0
+
 ## GraalMC 25.1.3.4 -> 25.1.3.5
 
 Using GraalJS 25.1.3
