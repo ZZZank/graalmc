@@ -30,6 +30,7 @@ shadowJar {
     archiveClassifier = 'dev-shadow'
 
     dependencies {
+        // exclude the pom
         exclude(dependency("org.graalvm.js:js"))
     }
 
@@ -39,6 +40,7 @@ shadowJar {
     relocate("org.graalvm", "graal.graalvm")
     relocate("com.oracle.svm", "graal.svm")
 
+    duplicatesStrategy = DuplicatesStrategy.WARN
     mergeServiceFiles()
 }
 
