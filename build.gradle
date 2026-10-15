@@ -5,28 +5,30 @@ plugins {
     id("com.hypherionmc.modutils.modpublisher") version "2.2.1"
 }
 
-dependencies {
-    // Source: https://mvnrepository.com/artifact/org.spongepowered/mixin
-    compileOnly("org.spongepowered:mixin:0.8.7")
-    compileOnly("org.apache.logging.log4j:log4j-api:2.19.0")
+configurations {
+    // 送入 shadowJar 做 relocate 处理的依赖
+    shade {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    // 重定位后的 GraalJS 完整 jar，供 :common 与各加载器项目消费
+    transformedBundle {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
 
-    String graalVersion = mod_version.substring(0, mod_version.lastIndexOf('.'))
-    implementation("org.graalvm.polyglot:polyglot:${graalVersion}")
-    implementation("org.graalvm.polyglot:js:${graalVersion}") {
+dependencies {
+    shade("org.graalvm.polyglot:polyglot:${graaljs_version}")
+    shade("org.graalvm.polyglot:js:${graaljs_version}") {
         exclude(group: "org.graalvm.shadowed", module: "icu4j")
         exclude(group: "org.graalvm.truffle", module: "truffle-enterprise")
         exclude(group: "org.graalvm.sdk", module: "nativeimage")
     }
-
-    testImplementation('org.junit.jupiter:junit-jupiter:5.14.3')
-    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
-}
-
-test {
-    useJUnitPlatform()
 }
 
 shadowJar {
+    configurations = [project.configurations.shade]
     archiveClassifier = 'dev-shadow'
 
     dependencies {
@@ -42,6 +44,11 @@ shadowJar {
 
     duplicatesStrategy = DuplicatesStrategy.WARN
     mergeServiceFiles()
+}
+
+// 把重定位后的 GraalJS jar 作为 `transformed` 供其他项目消费
+artifacts {
+    transformedBundle(tasks.shadowJar)
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -89,7 +96,8 @@ allprojects {
     }
 }
 
-subprojects {
+// exclude `common` project
+configure(subprojects.findAll { it.name != 'common' }) {
     apply plugin: 'dev.architectury.loom'
 
     base {

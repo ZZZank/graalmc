@@ -2,7 +2,7 @@ package graal.mod.mixin;
 
 import graal.mod.api.TypeMappingProvider;
 import graal.mod.api.TypeMappingProviderRegistry;
-import org.graalvm.polyglot.HostAccess;
+import graal.graalvm.polyglot.HostAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

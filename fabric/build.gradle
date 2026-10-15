@@ -6,20 +6,11 @@ plugins {
 }
 
 configurations {
-    common {
-        canBeResolved = true
-        canBeConsumed = false
-    }
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
-
-    // Files in this configuration will be bundled into your mod using the Shadow plugin.
+    // common 模块与重定位后的 GraalJS：编译/运行期可见，同时被打进最终 mod jar。
     // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
-    shadowBundle {
-        canBeResolved = true
-        canBeConsumed = false
-    }
+    var shade = create("shade")
+    implementation.extendsFrom(shade)
+    developmentFabric.extendsFrom(shade)
 }
 
 java {
@@ -38,13 +29,17 @@ loom {
 dependencies {
     minecraft "net.minecraft:minecraft:$minecraft_version"
     mappings loom.officialMojangMappings()
+
+    modImplementation("net.fabricmc:fabric-loader:$fabric_loader_version")
+
+    shade(project(':common')) { transitive = false }
+    shade(project(path: ':', configuration: 'transformedBundle')) { transitive = false }
+
+    testImplementation("net.fabricmc:fabric-loader-junit:${fabric_loader_version}")
 }
 
-dependencies {
-    modImplementation("net.fabricmc:fabric-loader:$rootProject.fabric_loader_version")
-
-    common(rootProject) { transitive = false }
-    shadowBundle(project(path: ':', configuration: 'shadow')) { transitive = false }
+test {
+    useJUnitPlatform()
 }
 
 processResources {
@@ -56,7 +51,7 @@ processResources {
 }
 
 shadowJar {
-    configurations = [project.configurations.shadowBundle]
+    configurations = [project.configurations.shade]
     archiveClassifier = 'dev-shadow'
 }
 

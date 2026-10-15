@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
+}
+
+dependencies {
+    compileOnly("org.spongepowered:mixin:0.8.7")
+    compileOnly("org.apache.logging.log4j:log4j-api:2.19.0")
+
+    compileOnly(project(path: ':', configuration: 'transformedBundle'))
+}

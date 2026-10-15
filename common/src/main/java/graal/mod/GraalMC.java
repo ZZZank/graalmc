@@ -3,8 +3,8 @@ package graal.mod;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.SandboxPolicy;
+import graal.graalvm.polyglot.Context;
+import graal.graalvm.polyglot.SandboxPolicy;
 import graal.mod.impl.LoggerOutputStream;
 
 public final class GraalMC {

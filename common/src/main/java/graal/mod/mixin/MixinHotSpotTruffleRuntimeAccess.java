@@ -1,6 +1,6 @@
 package graal.mod.mixin;
 
-import org.graalvm.home.Version;
+import graal.graalvm.home.Version;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -16,7 +16,7 @@ public abstract class MixinHotSpotTruffleRuntimeAccess {
 
     /// Return a version smaller than [com.oracle.truffle.api.impl.TruffleVersions#MIN_COMPILER_VERSION] so that Graal
     /// will not try to enable compiler for incompatible GraalVM
-    @Redirect(method = "getCompilerVersion", at = @At(value = "INVOKE", target = "Lorg/graalvm/home/Version;parse(Ljava/lang/String;)Lorg/graalvm/home/Version;"))
+    @Redirect(method = "getCompilerVersion", at = @At(value = "INVOKE", target = "Lgraal/graalvm/home/Version;parse(Ljava/lang/String;)Lgraal/graalvm/home/Version;"))
     private static Version inj(String versionString) {
         if (versionString == null) {
             // `MIN_COMPILER_VERSION` is `25.1.0`, 25.1.0 > 25.0.99

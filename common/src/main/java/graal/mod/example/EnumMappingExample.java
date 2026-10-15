@@ -1,8 +1,8 @@
 package graal.mod.example;
 
 import graal.mod.api.TypeMappingProviderRegistry;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.HostAccess;
+import graal.graalvm.polyglot.Context;
+import graal.graalvm.polyglot.HostAccess;
 
 /**
  * @author ZZZank

@@ -1,7 +1,7 @@
 package graal.mod.example;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.HostAccess;
+import graal.graalvm.polyglot.Context;
+import graal.graalvm.polyglot.HostAccess;
 import graal.mod.api.MemberRemapper;
 
 import java.lang.reflect.Field;

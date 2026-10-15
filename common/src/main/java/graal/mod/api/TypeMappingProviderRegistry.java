@@ -1,6 +1,6 @@
 package graal.mod.api;
 
-import org.graalvm.polyglot.HostAccess;
+import graal.graalvm.polyglot.HostAccess;
 
 import java.util.List;
 
