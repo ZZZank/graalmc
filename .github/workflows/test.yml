@@ -63,16 +63,16 @@ jobs:
           set-default: false
 
       # Versions from https://www.graalvm.org/downloads/
+      # reference: https://github.com/marketplace/actions/github-action-for-graalvm#options
       - name: setup GraalVM 25.x
         uses: actions/setup-java@v6
         with:
           distribution: graalvm
-          # this is quite confusing, there's no 25.4.4.1.1, only 25.4.4.1 (aka 25.4.4+1)
           java-version: |
-            25.4.4.1
-            25.3.4.1
-            25.2.4
-            25.1.3
+            25.4
+            25.3
+            25.2
+            25.1
           set-default: false
 
       - name: setup GraalVM Community 25.0.2
