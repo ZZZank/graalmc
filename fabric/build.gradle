@@ -122,32 +122,30 @@ void validatedProp(String prop, String env, BiConsumer<String, String> action) {
 // `25.4.4.1.1` and `25.3.4.1` both report "Java 25 + GraalVM" and therefore
 // cannot be told apart by toolchain matching.
 // ---------------------------------------------------------------------------
-def toolchainsFile = file(
-    System.getenv('MVN_TOOLCHAINS_FILE')
-        ?: "${System.getProperty('user.home')}/.m2/toolchains.xml"
-)
-def jdkTestTasks = []
-def seenJdkTasks = new HashSet<String>()
+def toolchainsFile = file(System.getenv('MVN_TOOLCHAINS_FILE') ?: "${System.getProperty('user.home')}/.m2/toolchains.xml")
 
 if (toolchainsFile.isFile()) {
+    List<String> jdkTestTasks = []
+    Set<String> seenJdkTasks = new HashSet<String>()
+
     def toolchains = new groovy.xml.XmlSlurper(false, false).parse(toolchainsFile)
     toolchains.toolchain.each { tc ->
         if (tc.type.text().trim() != 'jdk') {
             return
         }
 
-        def version = tc.provides.version.text().trim()
-        def vendor = tc.provides.vendor.text().trim()
-        def jdkHome = tc.configuration.jdkHome.text().trim()
+        String version = tc.provides.version.text().trim()
+        String vendor = tc.provides.vendor.text().trim()
+        String jdkHome = tc.configuration.jdkHome.text().trim()
         if (!jdkHome) {
             return
         }
 
-        // e.g. graalvm 25.4.4.1.1 -> testJdkgraalvm_25_4_4_1_1
-        def suffix = "${vendor}_${version}".toString().replaceAll('[^A-Za-z0-9]+', '_')
-        def taskName = "testJdk${suffix}".toString()
-        if (!seenJdkTasks.add(taskName)) {
-            return
+        // e.g. graalvm 25.4.4.1.1 -> testJdk_graalvm_25_4_4_1_1
+        String suffix = "${vendor}_${version}".toString().replaceAll('[^A-Za-z0-9]+', '_')
+        String taskName = "testJdk_${suffix}".toString()
+        while (!seenJdkTasks.add(taskName)) {
+            taskName = taskName + "_"
         }
 
         jdkTestTasks << taskName
@@ -160,24 +158,21 @@ if (toolchainsFile.isFile()) {
             executable = new File(jdkHome, 'bin/java').absolutePath
         }
     }
-}
 
-tasks.register('testAllJdks') {
-    group = 'verification'
-    description = 'Runs fabric tests on every JDK registered in ~/.m2/toolchains.xml'
-    dependsOn jdkTestTasks
+    tasks.register('testAllJdks') {
+        group = 'verification'
+        description = 'Runs fabric tests on every JDK registered in ~/.m2/toolchains.xml'
+        dependsOn(jdkTestTasks)
 
-    doFirst {
-        if (jdkTestTasks.isEmpty()) {
-            throw new GradleException(
-                "No JDK toolchains found in ${toolchainsFile}. " +
-                    "Install them with actions/setup-java (or set MVN_TOOLCHAINS_FILE) " +
-                    "before running testAllJdks."
-            )
+        doFirst {
+            if (jdkTestTasks.isEmpty()) {
+                throw new GradleException(
+                    "No JDK toolchains found in ${toolchainsFile}. " +
+                        "Install them with actions/setup-java (or set MVN_TOOLCHAINS_FILE) " +
+                        "before running testAllJdks."
+                )
+            }
+            logger.lifecycle("Running tests on ${jdkTestTasks.size()} JDK(s): " + jdkTestTasks.join(', '))
         }
-        logger.lifecycle(
-            "Running fabric tests on ${jdkTestTasks.size()} JDK(s): " +
-                jdkTestTasks.join(', ')
-        )
     }
 }
