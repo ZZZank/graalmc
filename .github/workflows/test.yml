@@ -2,12 +2,13 @@
 # that only appear on a specific JDK vendor, JVM implementation, or GraalVM
 # release.
 #
-# - `graalvm` job: tests compatibility with different Oracle GraalVM / GraalVM
-#   Community releases (versions from https://www.graalvm.org/downloads/)
-# - `jdk` job: representative non-GraalVM distributions across major versions
+# Instead of one CI job (and one Gradle configuration + compilation) per JDK,
+# every JDK is installed into a single job. `actions/setup-java` records all of
+# them — including every version of a multiline `java-version` input — in
+# `~/.m2/toolchains.xml`. The `:fabric:testAllJdks` Gradle task reads that file
+# and creates one `Test` task per JDK, so compilation happens only once.
 #
-# Test code currently lives only in the `fabric` project, so every matrix entry
-# runs `./gradlew :fabric:test`.
+# Individual JDKs can still be run locally, e.g. `./gradlew :fabric:testJdkgraalvm_25_4_4_1_1`.
 
 name: test
 on:
@@ -20,99 +21,80 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  graalvm:
-    name: GraalVM ${{ matrix.name }}
+  test:
+    name: fabric tests (all JDKs)
     runs-on: ubuntu-latest
-    strategy:
-      # fail-fast: false
-      matrix:
-        include:
-          - name: '25.4.4.1.1'
-            distribution: graalvm
-            java-version: '25.4.4.1.1'
-          - name: '25.3.4.1'
-            distribution: graalvm
-            java-version: '25.3.4.1'
-          - name: '25.2.4'
-            distribution: graalvm
-            java-version: '25.2.4'
-          - name: '25.1.3'
-            distribution: graalvm
-            java-version: '25.1.3'
-          - name: 'Community 25.0.2'
-            distribution: graalvm-community
-            java-version: '25.0.2'
     steps:
       - name: checkout repository
         uses: actions/checkout@v7
 
-      - name: setup Gradle wrapper
+      - name: setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 9.2.0
 
-      - name: setup GraalVM ${{ matrix.name }}
+      # Default JDK used to run Gradle itself. It is installed last in this
+      # multiline list, so `JAVA_HOME` / `PATH` point at temurin 21.
+      - name: setup Java 17/21/25 (temurin)
         uses: actions/setup-java@v6
         with:
-          java-version: ${{ matrix.java-version }}
-          distribution: ${{ matrix.distribution }}
+          distribution: temurin
+          java-version: |
+            17
+            25
+            21
+
+      - name: setup Java 17/21/25 (zulu)
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: |
+            17
+            21
+            25
+          set-default: false
+
+      - name: setup Java 17/21/25 (dragonwell)
+        uses: actions/setup-java@v6
+        with:
+          distribution: dragonwell
+          java-version: |
+            17
+            21
+            25
+          set-default: false
+
+      # Versions from https://www.graalvm.org/downloads/
+      - name: setup GraalVM 25.x
+        uses: actions/setup-java@v6
+        with:
+          distribution: graalvm
+          java-version: |
+            25.4.4.1.1
+            25.3.4.1
+            25.2.4
+            25.1.3
+          set-default: false
+
+      - name: setup GraalVM Community 25.0.2
+        uses: actions/setup-java@v6
+        with:
+          distribution: graalvm-community
+          java-version: '25.0.2'
+          set-default: false
 
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: print JDK info
-        run: |
-          java -version
-          echo "GRAALVM_HOME=$GRAALVM_HOME"
-
-      - name: run tests
-        run: ./gradlew :fabric:test
-
-      - name: upload test reports
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports-${{ matrix.distribution }}-${{ matrix.java-version }}
-          path: |
-            fabric/build/reports/tests/
-            fabric/build/test-results/
-          if-no-files-found: ignore
-
-  jdk:
-    name: Java ${{ matrix.java-version }} (${{ matrix.distribution }})
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        java-version: ['17', '21', '25']
-        distribution: [temurin, zulu, dragonwell]
-    steps:
-      - name: checkout repository
-        uses: actions/checkout@v7
-
-      - name: setup Gradle wrapper
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: setup Java ${{ matrix.java-version }} (${{ matrix.distribution }})
-        uses: actions/setup-java@v6
-        with:
-          java-version: ${{ matrix.java-version }}
-          distribution: ${{ matrix.distribution }}
-
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-
-      - name: print JDK info
+      - name: print default JDK
         run: java -version
 
-      - name: run tests
-        run: ./gradlew :fabric:test
+      - name: run tests on every installed JDK
+        run: ./gradlew :fabric:testAllJdks --continue
 
       - name: upload test reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ matrix.distribution }}-java${{ matrix.java-version }}
+          name: test-reports-all-jdks
           path: |
             fabric/build/reports/tests/
             fabric/build/test-results/

@@ -107,3 +107,77 @@ void validatedProp(String prop, String env, BiConsumer<String, String> action) {
         action.accept(projectID, apiKey)
     }
 }
+
+// ---------------------------------------------------------------------------
+// Multi-JDK test tasks
+//
+// `actions/setup-java` records every JDK it installs in ~/.m2/toolchains.xml
+// (all versions of a multiline `java-version` input are included). Instead of
+// running one CI job — and therefore one Gradle configuration + compilation —
+// per JDK, read that file once and register one `Test` task per JDK.
+//
+// Every generated task reuses the already-compiled `test` source set and forks
+// the JVM of the JDK recorded in the toolchains file. Using `executable`
+// instead of a Gradle toolchain is required for GraalVM point releases:
+// `25.4.4.1.1` and `25.3.4.1` both report "Java 25 + GraalVM" and therefore
+// cannot be told apart by toolchain matching.
+// ---------------------------------------------------------------------------
+def toolchainsFile = file(
+    System.getenv('MVN_TOOLCHAINS_FILE')
+        ?: "${System.getProperty('user.home')}/.m2/toolchains.xml"
+)
+def jdkTestTasks = []
+def seenJdkTasks = new HashSet<String>()
+
+if (toolchainsFile.isFile()) {
+    def toolchains = new groovy.xml.XmlSlurper(false, false).parse(toolchainsFile)
+    toolchains.toolchain.each { tc ->
+        if (tc.type.text().trim() != 'jdk') {
+            return
+        }
+
+        def version = tc.provides.version.text().trim()
+        def vendor = tc.provides.vendor.text().trim()
+        def jdkHome = tc.configuration.jdkHome.text().trim()
+        if (!jdkHome) {
+            return
+        }
+
+        // e.g. graalvm 25.4.4.1.1 -> testJdkgraalvm_25_4_4_1_1
+        def suffix = "${vendor}_${version}".toString().replaceAll('[^A-Za-z0-9]+', '_')
+        def taskName = "testJdk${suffix}".toString()
+        if (!seenJdkTasks.add(taskName)) {
+            return
+        }
+
+        jdkTestTasks << taskName
+        tasks.register(taskName, Test) {
+            group = 'verification'
+            description = "Runs fabric tests on ${vendor} ${version}".toString()
+            testClassesDirs = project.sourceSets.test.output.classesDirs
+            classpath = project.sourceSets.test.runtimeClasspath
+            useJUnitPlatform()
+            executable = new File(jdkHome, 'bin/java').absolutePath
+        }
+    }
+}
+
+tasks.register('testAllJdks') {
+    group = 'verification'
+    description = 'Runs fabric tests on every JDK registered in ~/.m2/toolchains.xml'
+    dependsOn jdkTestTasks
+
+    doFirst {
+        if (jdkTestTasks.isEmpty()) {
+            throw new GradleException(
+                "No JDK toolchains found in ${toolchainsFile}. " +
+                    "Install them with actions/setup-java (or set MVN_TOOLCHAINS_FILE) " +
+                    "before running testAllJdks."
+            )
+        }
+        logger.lifecycle(
+            "Running fabric tests on ${jdkTestTasks.size()} JDK(s): " +
+                jdkTestTasks.join(', ')
+        )
+    }
+}
